@@ -2,7 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
         <title>Syntax diagram generator</title>
         <style type="text/css">
         svg.railroad {
@@ -10,12 +9,12 @@
         }
 
         body {
-            padding: 10px;
+            margin: 0px;
         }
 
         div#content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 3fr;
             grid-template-rows: 1fr 2fr;
             grid-gap: 10px;
             height: 100vh;
@@ -24,6 +23,8 @@
         div#input {
             grid-column: 1;
             grid-row: 1;
+            margin-top: 15px;
+            margin-left: 15px;
         }
 
         textarea#macro_text {
@@ -47,6 +48,7 @@
             border-top: 1px solid;
             grid-column: 1 / span 2;
             grid-row: 2;
+            margin: 15px;
         }
 
         span.macro_name {
@@ -59,7 +61,6 @@
         </style>
     </head>
     <body>
-        <a class="github-fork-ribbon right-bottom" data-ribbon="Fork me on GitHub" href="https://github.com/lukaslueg/macro_railroad" title="Fork me on GitHub">Fork me on GitHub</a>
         <div id="content">
             <div id="input">
                 <textarea rows="25" name="macro_text" id="macro_text" data-gramm_editor="false">macro_rules! named {
@@ -78,12 +79,17 @@
             </div>
 
             <div id="copytext">
+                <a href="https://github.com/lukaslueg/macro_railroad">
+                    <img style="float: right" src="forkme.svg" width="150" height="150" alt="Fork me!">
+                </a>
+                <div style="margin-top: 15px; margin-right: 15px">
                 This is a demonstration of a pure-rust library to generate <a target="_blank" rel="noopener noreferrer" href="https://www.sqlite.org/syntaxdiagrams.html">syntax diagrams</a> for <span class="macro_name">macro_rules!()</span>.<br><br>
 The syntax of rust's macros can get out of hand very quickly and it can be very hard to understand what input-pattern a macro requires. This library aims at helping to remedy this situation. Diagrams are generated fully automatically from rust-source as Scalable Vector Graphics, using customizable CSS for layout.<br><br>
 Paste a <span class="macro_name">macro_rules!()</span>-block into the text-area on the left; modify them as you wish. A wasm-blob will generate a syntax-diagram as an SVG in the area below.<br><br>
 Here are some examples:
                 <ul>
                     <li><a href="javascript:set_macro('bitflags')"><span class="macro_name">bitflags!()</span> from the `bitflags`-crate</a></li>
+                    <li><a href="javascript:set_macro('cond_reduce')"><span class="macro_name">cond_reduce!()</span> from `syn`</a></li>
                     <li><a href="javascript:set_macro('cfg_if')"><span class="macro_name">cfg_if!()</span> from `cfg-if`</a></li>
                     <li><a href="javascript:set_macro('panic')"><span class="macro_name">panic!()</span> from the standard library</a></li>
                     <li><a href="javascript:set_macro('gfxdefines')"><span class="macro_name">gfx_defines!()</span> from `gfx-rs`</a></li>
@@ -93,6 +99,7 @@ Here are some examples:
                 </ul>
 
                 <span style="font-style: italic">As an exercise: Load the <span class="macro_name">verify!()</span>-example; ensure that the layout-optimization is enabled; in the last pattern, change the name from `submac` to `submac2` and `args` to `args2`; notice the new layout.</span>
+                </div>
             </div>
 
             <div id="output"></div>
@@ -130,6 +137,12 @@ Here are some examples:
     ($msg:expr) => { ... };
     ($msg:expr,) => { ... };
     ($fmt:expr, $($arg:tt)+) => { ... };
+}`;
+                    } else if ( macro_name === "cond_reduce" ) {
+                        macro_text.value = `macro_rules! cond_reduce {
+    ($i:expr, $cond:expr, $submac:ident!( $($args:tt)* )) => { ... };
+    ($i:expr, $cond:expr) => { ... };
+    ($i:expr, $cond:expr, $f:expr) => { ... };
 }`;
                     } else if ( macro_name === "sep" ) {
                         macro_text.value = `macro_rules! sep {
