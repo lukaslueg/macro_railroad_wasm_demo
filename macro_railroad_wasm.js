@@ -484,14 +484,14 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
     return {
         imports: {
             env: {
-                "__extjs_db0226ae1bbecd407e9880ee28ddc70fc3322d9c": function($0) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);Module.STDWEB_PRIVATE.unregister_raw_value (($0));
-            },
-            "__extjs_80d6d56760c65e49b7be8b6b01c1ea861b046bf0": function($0) {
+                "__extjs_80d6d56760c65e49b7be8b6b01c1ea861b046bf0": function($0) {
                 Module.STDWEB_PRIVATE.decrement_refcount( $0 );
             },
             "__extjs_ff5103e6cc179d13b4c7a785bdce2708fd559fc0": function($0) {
                 Module.STDWEB_PRIVATE.tmp = Module.STDWEB_PRIVATE.to_js( $0 );
+            },
+            "__extjs_db0226ae1bbecd407e9880ee28ddc70fc3322d9c": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);Module.STDWEB_PRIVATE.unregister_raw_value (($0));
             },
                 "__web_on_grow": __web_on_grow
             }
@@ -502,7 +502,11 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             Object.defineProperty( Module, 'web_free', { value: Module.instance.exports.__web_free } );
             Object.defineProperty( Module, 'web_table', { value: Module.instance.exports.__web_table } );
 
-            Module.exports.to_diagram_node = function to_diagram_node(src, hide_internal, foldcommontails, legend) {
+            Module.exports.version_info = function version_info() {
+    return Module.STDWEB_PRIVATE.acquire_tmp(Module.instance.exports.version_info());
+}
+;
+                Module.exports.to_diagram_node = function to_diagram_node(src, hide_internal, foldcommontails, legend) {
     return Module.STDWEB_PRIVATE.acquire_tmp(Module.instance.exports.to_diagram_node(Module.STDWEB_PRIVATE.prepare_any_arg(src), Module.STDWEB_PRIVATE.prepare_any_arg(hide_internal), Module.STDWEB_PRIVATE.prepare_any_arg(foldcommontails), Module.STDWEB_PRIVATE.prepare_any_arg(legend)));
 }
 ;
