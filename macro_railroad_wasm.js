@@ -506,8 +506,8 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
     return Module.STDWEB_PRIVATE.acquire_tmp(Module.instance.exports.version_info());
 }
 ;
-                Module.exports.to_diagram_node = function to_diagram_node(src, hide_internal, foldcommontails, legend) {
-    return Module.STDWEB_PRIVATE.acquire_tmp(Module.instance.exports.to_diagram_node(Module.STDWEB_PRIVATE.prepare_any_arg(src), Module.STDWEB_PRIVATE.prepare_any_arg(hide_internal), Module.STDWEB_PRIVATE.prepare_any_arg(foldcommontails), Module.STDWEB_PRIVATE.prepare_any_arg(legend)));
+                Module.exports.to_diagram_node = function to_diagram_node(src, hide_internal, ungroup, foldcommontails, legend) {
+    return Module.STDWEB_PRIVATE.acquire_tmp(Module.instance.exports.to_diagram_node(Module.STDWEB_PRIVATE.prepare_any_arg(src), Module.STDWEB_PRIVATE.prepare_any_arg(hide_internal), Module.STDWEB_PRIVATE.prepare_any_arg(ungroup), Module.STDWEB_PRIVATE.prepare_any_arg(foldcommontails), Module.STDWEB_PRIVATE.prepare_any_arg(legend)));
 }
 ;
             __web_on_grow();
