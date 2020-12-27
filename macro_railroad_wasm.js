@@ -29,11 +29,14 @@ function getStringFromWasm0(ptr, len) {
 */
 export function version_info() {
     try {
-        wasm.version_info(8);
-        var r0 = getInt32Memory0()[8 / 4 + 0];
-        var r1 = getInt32Memory0()[8 / 4 + 1];
+        const retptr = wasm.__wbindgen_export_0.value - 16;
+        wasm.__wbindgen_export_0.value = retptr;
+        wasm.version_info(retptr);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
         return getStringFromWasm0(r0, r1);
     } finally {
+        wasm.__wbindgen_export_0.value += 16;
         wasm.__wbindgen_free(r0, r1);
     }
 }
@@ -102,13 +105,16 @@ function passStringToWasm0(arg, malloc, realloc) {
 */
 export function to_diagram_node(src, hide_internal, ungroup, foldcommontails, legend) {
     try {
+        const retptr = wasm.__wbindgen_export_0.value - 16;
+        wasm.__wbindgen_export_0.value = retptr;
         var ptr0 = passStringToWasm0(src, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
-        wasm.to_diagram_node(8, ptr0, len0, hide_internal, ungroup, foldcommontails, legend);
-        var r0 = getInt32Memory0()[8 / 4 + 0];
-        var r1 = getInt32Memory0()[8 / 4 + 1];
+        wasm.to_diagram_node(retptr, ptr0, len0, hide_internal, ungroup, foldcommontails, legend);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
         return getStringFromWasm0(r0, r1);
     } finally {
+        wasm.__wbindgen_export_0.value += 16;
         wasm.__wbindgen_free(r0, r1);
     }
 }
