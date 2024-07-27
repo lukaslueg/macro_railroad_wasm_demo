@@ -107,16 +107,17 @@ function passStringToWasm0(arg, malloc, realloc) {
 * @param {boolean} ungroup
 * @param {boolean} foldcommontails
 * @param {boolean} legend
+* @param {boolean} bright
 * @returns {string}
 */
-export function to_diagram_node(src, hide_internal, ungroup, foldcommontails, legend) {
+export function to_diagram_node(src, hide_internal, ungroup, foldcommontails, legend, bright) {
     let deferred2_0;
     let deferred2_1;
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(src, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        wasm.to_diagram_node(retptr, ptr0, len0, hide_internal, ungroup, foldcommontails, legend);
+        wasm.to_diagram_node(retptr, ptr0, len0, hide_internal, ungroup, foldcommontails, legend, bright);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         deferred2_0 = r0;
