@@ -47,7 +47,6 @@ export function version_info() {
         wasm.__wbindgen_export3(deferred1_0, deferred1_1, 1);
     }
 }
-
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
