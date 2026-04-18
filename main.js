@@ -186,9 +186,17 @@ const MACROS = {
 }`,
 };
 
+const EDITOR_HEIGHT_STORAGE_KEY = 'macro-railroad-editor-height';
+const DEFAULT_EDITOR_HEIGHT = 350;
+const MIN_EDITOR_HEIGHT = 160;
+const MIN_DIAGRAM_HEIGHT = 200;
+const LIGHT_EDITOR_THEME = 'ace/theme/github';
+const DARK_EDITOR_THEME = 'ace/theme/twilight';
+
 let aceEditor = null;
 let wasmReady = false;
 let currentTheme = 'light';
+let editorResizeState = null;
 
 function escapeHtml(str) {
     const div = document.createElement('div');
@@ -214,12 +222,86 @@ function updateDiagram() {
     }
 }
 
+function getEditorResizeElements() {
+    return {
+        mainContent: document.querySelector('.main-content'),
+        editorArea: document.querySelector('.editor-area'),
+        resizeHandle: document.getElementById('editor-resize-handle'),
+    };
+}
+
+function clampEditorHeight(height) {
+    const { mainContent, resizeHandle } = getEditorResizeElements();
+    if (!mainContent || !resizeHandle) return height;
+    const availableHeight = mainContent.clientHeight - resizeHandle.offsetHeight;
+    const maxHeight = Math.max(MIN_EDITOR_HEIGHT, availableHeight - MIN_DIAGRAM_HEIGHT);
+    return Math.min(Math.max(height, MIN_EDITOR_HEIGHT), maxHeight);
+}
+
+function applyEditorHeight(height, persist = true) {
+    const { editorArea } = getEditorResizeElements();
+    if (!editorArea) return;
+    const nextHeight = clampEditorHeight(height);
+    editorArea.style.height = `${nextHeight}px`;
+    if (persist) {
+        localStorage.setItem(EDITOR_HEIGHT_STORAGE_KEY, String(Math.round(nextHeight)));
+    }
+    if (aceEditor) aceEditor.resize();
+}
+
+function restoreEditorHeight() {
+    const savedHeight = Number.parseInt(localStorage.getItem(EDITOR_HEIGHT_STORAGE_KEY) || '', 10);
+    applyEditorHeight(Number.isFinite(savedHeight) ? savedHeight : DEFAULT_EDITOR_HEIGHT, false);
+}
+
+function handleEditorResizeMove(event) {
+    if (!editorResizeState) return;
+    applyEditorHeight(editorResizeState.startHeight + (event.clientY - editorResizeState.startY), false);
+}
+
+function finishEditorResize(event) {
+    if (!editorResizeState) return;
+    applyEditorHeight(editorResizeState.startHeight + (event.clientY - editorResizeState.startY));
+    editorResizeState.cleanup();
+    editorResizeState = null;
+}
+
+function startEditorResize(event) {
+    if (editorResizeState || event.button !== 0) return;
+    const { editorArea, resizeHandle } = getEditorResizeElements();
+    if (!editorArea || !resizeHandle) return;
+    event.preventDefault();
+    const pointerId = event.pointerId;
+    const onPointerMove = moveEvent => handleEditorResizeMove(moveEvent);
+    const onPointerUp = upEvent => finishEditorResize(upEvent);
+    const onPointerCancel = cancelEvent => finishEditorResize(cancelEvent);
+    editorResizeState = {
+        startY: event.clientY,
+        startHeight: editorArea.getBoundingClientRect().height,
+        cleanup: () => {
+            document.body.classList.remove('is-resizing');
+            if (resizeHandle.hasPointerCapture(pointerId)) {
+                resizeHandle.releasePointerCapture(pointerId);
+            }
+            resizeHandle.removeEventListener('pointermove', onPointerMove);
+            resizeHandle.removeEventListener('pointerup', onPointerUp);
+            resizeHandle.removeEventListener('pointercancel', onPointerCancel);
+        },
+    };
+    document.body.classList.add('is-resizing');
+    resizeHandle.setPointerCapture(pointerId);
+    resizeHandle.addEventListener('pointermove', onPointerMove);
+    resizeHandle.addEventListener('pointerup', onPointerUp);
+    resizeHandle.addEventListener('pointercancel', onPointerCancel);
+}
+
 function initAceEditor() {
     ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.43.3/');
 
     const savedTheme = localStorage.getItem('macro-railroad-editor-theme')
-        || (currentTheme === 'dark' ? 'ace/theme/twilight' : 'ace/theme/github');
+        || (currentTheme === 'dark' ? DARK_EDITOR_THEME : LIGHT_EDITOR_THEME);
 
+    restoreEditorHeight();
     aceEditor = ace.edit('ace-editor', {
         mode: 'ace/mode/rust',
         theme: savedTheme,
@@ -245,17 +327,26 @@ function updateThemeToggleLabel() {
     if (label) label.textContent = currentTheme === 'dark' ? 'Light mode' : 'Dark mode';
 }
 
+function getPreferredPageTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 function restoreTheme() {
-    const saved = localStorage.getItem('macro-railroad-theme') || 'light';
-    currentTheme = saved;
-    document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : '');
+    currentTheme = localStorage.getItem('macro-railroad-theme') || getPreferredPageTheme();
+    document.documentElement.setAttribute('data-theme', currentTheme === 'dark' ? 'dark' : '');
     updateThemeToggleLabel();
 }
 
 function handleThemeToggle() {
     currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+    const editorTheme = currentTheme === 'dark' ? DARK_EDITOR_THEME : LIGHT_EDITOR_THEME;
     document.documentElement.setAttribute('data-theme', currentTheme === 'dark' ? 'dark' : '');
     localStorage.setItem('macro-railroad-theme', currentTheme);
+    localStorage.setItem('macro-railroad-editor-theme', editorTheme);
+    if (aceEditor) {
+        aceEditor.setTheme(editorTheme);
+    }
+    document.getElementById('editor-theme').value = editorTheme;
     // Sync opt_bright to match page theme: light page → bright diagrams
     document.getElementById('opt_bright').checked = currentTheme === 'light';
     updateThemeToggleLabel();
@@ -276,6 +367,12 @@ function handleToggleOptions() {
         container.hasAttribute('data-options-hidden') ? 'Show Options' : 'Hide Options';
     // Resize the Ace editor to fill the newly available width
     if (aceEditor) aceEditor.resize();
+}
+
+function handleWindowResize() {
+    const { editorArea } = getEditorResizeElements();
+    if (!editorArea) return;
+    applyEditorHeight(editorArea.getBoundingClientRect().height, false);
 }
 
 function handleUrlParam() {
@@ -299,6 +396,7 @@ function wireEvents() {
     document.getElementById('copy-svg').addEventListener('click', handleCopySvg);
     document.getElementById('theme-toggle').addEventListener('click', handleThemeToggle);
     document.getElementById('toggle-options').addEventListener('click', handleToggleOptions);
+    document.getElementById('editor-resize-handle').addEventListener('pointerdown', startEditorResize);
     document.getElementById('editor-theme').addEventListener('change', e => {
         const theme = e.target.value;
         aceEditor.setTheme(theme);
@@ -311,6 +409,7 @@ function wireEvents() {
         const text = MACROS[link.dataset.macro];
         if (text) aceEditor.setValue(text, -1);
     });
+    window.addEventListener('resize', handleWindowResize);
 }
 
 async function bootstrap() {
