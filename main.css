@@ -121,7 +121,8 @@ body {
     flex-shrink: 0;
 }
 
-#copy-svg {
+#copy-svg,
+#save-png {
     margin-right: 8px;
 }
 
@@ -208,9 +209,13 @@ body {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 16px;
-    overflow: auto;
+    overflow: hidden;
     position: relative;
+    cursor: grab;
+}
+
+.diagram-area.is-panning {
+    cursor: grabbing;
 }
 
 body.is-resizing,
@@ -221,6 +226,54 @@ body.is-resizing * {
 
 #output {
     min-height: 200px;
+    padding: 16px;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+/* Diagram Navigation Controls */
+.diagram-nav {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.diagram-nav-btn {
+    pointer-events: auto;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    transition: opacity 0.1s ease, background 0.1s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.diagram-nav-btn:hover {
+    opacity: 1;
+    background: var(--bg-primary);
+}
+
+.diagram-nav-btn-label {
+    width: auto;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 500;
+    height: 28px;
 }
 
 /* Options Panel */
@@ -408,6 +461,33 @@ body.is-resizing * {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--error-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    animation: toast-in 0.2s ease, toast-out 0.3s ease 2.7s forwards;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toast-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 /* Error States */

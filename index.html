@@ -20,6 +20,7 @@
                 Fork me on GitHub
             </a>
             <button class="btn btn-secondary" id="copy-svg">Copy SVG</button>
+            <button class="btn btn-secondary" id="save-png">Save PNG</button>
             <button class="btn btn-secondary" id="toggle-options">
                 <span id="toggle-options-label">Hide Options</span>
             </button>
@@ -42,8 +43,13 @@
                 aria-label="Resize input area"
                 aria-orientation="horizontal"
             ></div>
-            <div class="diagram-area">
+            <div class="diagram-area" id="diagram-area">
                 <div id="output"></div>
+                <div class="diagram-nav">
+                    <button class="diagram-nav-btn" id="zoom-in" title="Zoom in">+</button>
+                    <button class="diagram-nav-btn" id="zoom-out" title="Zoom out">&minus;</button>
+                    <button class="diagram-nav-btn diagram-nav-btn-label" id="zoom-reset" title="Reset view">Reset</button>
+                </div>
             </div>
         </main>
 
@@ -108,6 +114,7 @@
                 <li><a href="#" data-macro="cond_reduce">cond_reduce!()</a></li>
                 <li><a href="#" data-macro="named_attrs">named_args!()</a></li>
                 <li><a href="#" data-macro="verify">verify!()</a></li>
+                <li><a href="#" data-macro="quick_error">quick_error!()</a></li>
                 <li><a href="#" data-macro="hodor">HODOR!()</a></li>
             </ul>
 

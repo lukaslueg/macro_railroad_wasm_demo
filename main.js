@@ -145,6 +145,254 @@ const MACROS = {
     ($i:expr, $f:expr, $submac:ident!( $($args:tt)* )) => { ... };
 }`,
 
+    quick_error: `macro_rules! quick_error {
+    (   $(#[$meta:meta])*
+        pub enum $name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (   $(#[$meta:meta])*
+        enum $name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (   $(#[$meta:meta])*
+        pub enum $name:ident wraps $enum_name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (   $(#[$meta:meta])*
+        pub enum $name:ident wraps pub $enum_name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (   $(#[$meta:meta])*
+        enum $name:ident wraps $enum_name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (   $(#[$meta:meta])*
+        enum $name:ident wraps pub $enum_name:ident { $($chunks:tt)* }
+    ) => { ... };
+    (
+        WRAPPER $internal:ident [ $($strdef:tt)* ] $strname:ident
+        $(#[$meta:meta])*
+    ) => { ... };
+    (SORT [enum $name:ident $( #[$meta:meta] )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [ ]
+        queue [ ]
+    ) => { ... };
+    (SORT [pub enum $name:ident $( #[$meta:meta] )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [ ]
+        queue [ ]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*]
+        queue [ #[$qmeta:meta] $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*]
+        queue [ $qitem:ident $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*
+            => $bitem:ident: $bmode:tt [$( $bvar:ident: $btyp:ty ),*] ]
+        queue [ #[$qmeta:meta] $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )* => $bitem:ident: UNIT [ ] ]
+        queue [($( $qvar:ident: $qtyp:ty ),+) $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )* => $bitem:ident: UNIT [ ] ]
+        queue [{ $( $qvar:ident: $qtyp:ty ),+} $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )* => $bitem:ident: UNIT [ ] ]
+        queue [{$( $qvar:ident: $qtyp:ty ),+ ,} $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*
+                 => $bitem:ident: $bmode:tt [$( $bvar:ident: $btyp:ty ),*] ]
+        queue [ {$( $qfuncs:tt )*} $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*
+                 => $bitem:ident: $bmode:tt [$( $bvar:ident: $btyp:ty ),*] ]
+        queue [ $qitem:ident $( $tail:tt )*]
+    ) => { ... };
+    (SORT [$( $def:tt )*]
+        items [$($( #[$imeta:meta] )*
+                  => $iitem:ident: $imode:tt [$( $ivar:ident: $ityp:ty ),*]
+                                {$( $ifuncs:tt )*} )* ]
+        buf [$( #[$bmeta:meta] )*
+            => $bitem:ident: $bmode:tt [$( $bvar:ident: $btyp:ty ),*] ]
+        queue [ ]
+    ) => { ... };
+    (ENUM_DEFINITION [pub enum $name:ident $( #[$meta:meta] )*]
+        body [$($( #[$imeta:meta] )*
+            => $iitem:ident ($(($( $ttyp:ty ),+))*) {$({$( $svar:ident: $styp:ty ),*})*} )* ]
+        queue [ ]
+    ) => { ... };
+    (ENUM_DEFINITION [enum $name:ident $( #[$meta:meta] )*]
+        body [$($( #[$imeta:meta] )*
+            => $iitem:ident ($(($( $ttyp:ty ),+))*) {$({$( $svar:ident: $styp:ty ),*})*} )* ]
+        queue [ ]
+    ) => { ... };
+    (ENUM_DEFINITION [$( $def:tt )*]
+        body [$($( #[$imeta:meta] )*
+            => $iitem:ident ($(($( $ttyp:ty ),+))*) {$({$( $svar:ident: $styp:ty ),*})*} )* ]
+        queue [$( #[$qmeta:meta] )*
+            => $qitem:ident: UNIT [ ] $( $queue:tt )*]
+    ) => { ... };
+    (ENUM_DEFINITION [$( $def:tt )*]
+        body [$($( #[$imeta:meta] )*
+            => $iitem:ident ($(($( $ttyp:ty ),+))*) {$({$( $svar:ident: $styp:ty ),*})*} )* ]
+        queue [$( #[$qmeta:meta] )*
+            => $qitem:ident: TUPLE [$( $qvar:ident: $qtyp:ty ),+] $( $queue:tt )*]
+    ) => { ... };
+    (ENUM_DEFINITION [$( $def:tt )*]
+        body [$($( #[$imeta:meta] )*
+            => $iitem:ident ($(($( $ttyp:ty ),+))*) {$({$( $svar:ident: $styp:ty ),*})*} )* ]
+        queue [$( #[$qmeta:meta] )*
+            => $qitem:ident: STRUCT [$( $qvar:ident: $qtyp:ty ),*] $( $queue:tt )*]
+    ) => { ... };
+    (IMPLEMENTATIONS
+        $name:ident {$(
+            $item:ident: $imode:tt [$(#[$imeta:meta])*] [$( $var:ident: $typ:ty ),*] {$( $funcs:tt )*}
+        )*}
+    ) => { ... };
+    (FIND_DISPLAY_IMPL $name:ident $item:ident: $imode:tt
+        { display($self_:tt) -> ($( $exprs:tt )*) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_DISPLAY_IMPL $name:ident $item:ident: $imode:tt
+        { display($pattern: expr) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_DISPLAY_IMPL $name:ident $item:ident: $imode:tt
+        { display($pattern: expr, $( $exprs:tt )*) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_DISPLAY_IMPL $name:ident $item:ident: $imode:tt
+        { $t:tt $( $tail:tt )*}
+    ) => { ... };
+    (FIND_DISPLAY_IMPL $name:ident $item:ident: $imode:tt
+        { }
+    ) => { ... };
+    (FIND_SOURCE_IMPL $item:ident: $imode:tt
+        [$( $var:ident ),*]
+        { source($expr:expr) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_SOURCE_IMPL $item:ident: $imode:tt
+        [$( $var:ident ),*]
+        { $t:tt $( $tail:tt )*}
+    ) => { ... };
+    (FIND_SOURCE_IMPL $item:ident: $imode:tt
+        [$( $var:ident ),*]
+        { }
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: $imode:tt
+        [$( $var:ident: $typ:ty ),*]
+        { from() $( $tail:tt )*}
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: UNIT
+        [ ]
+        { from($ftyp:ty) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: TUPLE
+        [$( $var:ident: $typ:ty ),*]
+        { from($fvar:ident: $ftyp:ty) -> ($( $texpr:expr ),*) $( $tail:tt )*}
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: STRUCT
+        [$( $var:ident: $typ:ty ),*]
+        { from($fvar:ident: $ftyp:ty) -> {$( $tvar:ident: $texpr:expr ),*} $( $tail:tt )*}
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: $imode:tt
+        [$( $var:ident: $typ:ty ),*]
+        { $t:tt $( $tail:tt )*}
+    ) => { ... };
+    (FIND_FROM_IMPL $name:ident $item:ident: $imode:tt
+        [$( $var:ident: $typ:ty ),*]
+        { }
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: TUPLE
+        [$( $var:ident: $typ:ty ),*]
+        { context($cvar:ident: AsRef<$ctyp:ty>, $fvar:ident: $ftyp:ty)
+            -> ($( $texpr:expr ),*) $( $tail:tt )* }
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: TUPLE
+        [$( $var:ident: $typ:ty ),*]
+        { context($cvar:ident: $ctyp:ty, $fvar:ident: $ftyp:ty)
+            -> ($( $texpr:expr ),*) $( $tail:tt )* }
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: STRUCT
+        [$( $var:ident: $typ:ty ),*]
+        { context($cvar:ident: AsRef<$ctyp:ty>, $fvar:ident: $ftyp:ty)
+            -> {$( $tvar:ident: $texpr:expr ),*} $( $tail:tt )* }
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: STRUCT
+        [$( $var:ident: $typ:ty ),*]
+        { context($cvar:ident: $ctyp:ty, $fvar:ident: $ftyp:ty)
+            -> {$( $tvar:ident: $texpr:expr ),*} $( $tail:tt )* }
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: $imode:tt
+        [$( $var:ident: $typ:ty ),*]
+        { $t:tt $( $tail:tt )*}
+    ) => { ... };
+    (FIND_CONTEXT_IMPL $name:ident $item:ident: $imode:tt
+        [$( $var:ident: $typ:ty ),*]
+        { }
+    ) => { ... };
+    (ITEM_BODY $(#[$imeta:meta])* $item:ident: UNIT
+    ) => { ... };
+    (ITEM_BODY $(#[$imeta:meta])* $item:ident: TUPLE
+        [$( $typ:ty ),*]
+    ) => { ... };
+    (ITEM_BODY $(#[$imeta:meta])* $item:ident: STRUCT
+        [$( $var:ident: $typ:ty ),*]
+    ) => { ... };
+    (ITEM_PATTERN $name:ident $item:ident: UNIT []
+    ) => { ... };
+    (ITEM_PATTERN $name:ident $item:ident: TUPLE
+        [$( ref $var:ident ),*]
+    ) => { ... };
+    (ITEM_PATTERN $name:ident $item:ident: STRUCT
+        [$( ref $var:ident ),*]
+    ) => { ... };
+    (ERROR_CHECK $imode:tt display($self_:tt) -> ($( $exprs:tt )*) $( $tail:tt )*) => { ... };
+    (ERROR_CHECK $imode:tt display($pattern: expr) $( $tail:tt )*) => { ... };
+    (ERROR_CHECK $imode:tt display($pattern: expr, $( $exprs:tt )*) $( $tail:tt )*) => { ... };
+    (ERROR_CHECK $imode:tt source($expr:expr) $($tail:tt)*) => { ... };
+    (ERROR_CHECK $imode:tt from() $($tail:tt)*) => { ... };
+    (ERROR_CHECK $imode:tt from($ftyp:ty) $($tail:tt)*) => { ... };
+    (ERROR_CHECK TUPLE from($fvar:ident: $ftyp:ty) -> ($( $e:expr ),*) $( $tail:tt )*) => { ... };
+    (ERROR_CHECK STRUCT from($fvar:ident: $ftyp:ty) -> {$( $v:ident: $e:expr ),*} $( $tail:tt )*) => { ... };
+    (ERROR_CHECK TUPLE context($cvar:ident: $ctyp:ty, $fvar:ident: $ftyp:ty)
+        -> ($( $e:expr ),*) $( $tail:tt )*) => { ... };
+    (ERROR_CHECK STRUCT context($cvar:ident: $ctyp:ty, $fvar:ident: $ftyp:ty)
+        -> {$( $v:ident: $e:expr ),*} $( $tail:tt )*) => { ... };
+    (ERROR_CHECK $imode:tt ) => { ... };
+    (IDENT $ident:ident) => { ... };
+}`,
+
     hodor: `macro_rules! HODOR {
  ($ptr:ident; $vec:ident;) => {};
  ($ptr:ident; $vec:ident;  HODOR.  HODOR? $($x:tt)*) => {
@@ -198,10 +446,86 @@ let wasmReady = false;
 let currentTheme = 'light';
 let editorResizeState = null;
 
+// Diagram viewport state (zoom + pan)
+const ZOOM_MIN = 0.1;
+const ZOOM_MAX = 5;
+const ZOOM_STEP = 0.25;
+const ZOOM_WHEEL_FACTOR = 0.001;
+let viewZoom = 1;
+let viewPanX = 0;
+let viewPanY = 0;
+let panState = null;
+
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+
+function applyViewTransform() {
+    const output = document.getElementById('output');
+    output.style.transform = `translate(${viewPanX}px, ${viewPanY}px) scale(${viewZoom})`;
+}
+
+function resetView() {
+    viewZoom = 1;
+    viewPanX = 0;
+    viewPanY = 0;
+    applyViewTransform();
+}
+
+function zoomBy(delta, centerX, centerY) {
+    const oldZoom = viewZoom;
+    viewZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, viewZoom + delta));
+    if (centerX !== undefined && centerY !== undefined) {
+        // Adjust pan so the point under the cursor stays fixed
+        const ratio = viewZoom / oldZoom;
+        viewPanX = centerX - ratio * (centerX - viewPanX);
+        viewPanY = centerY - ratio * (centerY - viewPanY);
+    }
+    applyViewTransform();
+}
+
+function handleDiagramPointerDown(event) {
+    if (panState || event.button !== 0) return;
+    // Don't pan when clicking nav buttons
+    if (event.target.closest('.diagram-nav')) return;
+    event.preventDefault();
+    const area = document.getElementById('diagram-area');
+    const pointerId = event.pointerId;
+    const onMove = e => {
+        viewPanX += e.clientX - panState.lastX;
+        viewPanY += e.clientY - panState.lastY;
+        panState.lastX = e.clientX;
+        panState.lastY = e.clientY;
+        applyViewTransform();
+    };
+    const onUp = () => {
+        area.classList.remove('is-panning');
+        if (area.hasPointerCapture(pointerId)) {
+            area.releasePointerCapture(pointerId);
+        }
+        area.removeEventListener('pointermove', onMove);
+        area.removeEventListener('pointerup', onUp);
+        area.removeEventListener('pointercancel', onUp);
+        panState = null;
+    };
+    panState = { lastX: event.clientX, lastY: event.clientY };
+    area.classList.add('is-panning');
+    area.setPointerCapture(pointerId);
+    area.addEventListener('pointermove', onMove);
+    area.addEventListener('pointerup', onUp);
+    area.addEventListener('pointercancel', onUp);
+}
+
+function handleDiagramWheel(event) {
+    event.preventDefault();
+    const area = document.getElementById('diagram-area');
+    const rect = area.getBoundingClientRect();
+    const cursorX = event.clientX - rect.left;
+    const cursorY = event.clientY - rect.top;
+    const delta = -event.deltaY * ZOOM_WHEEL_FACTOR * viewZoom;
+    zoomBy(delta, cursorX, cursorY);
 }
 
 function updateDiagram() {
@@ -220,6 +544,7 @@ function updateDiagram() {
         document.getElementById('output').innerHTML =
             `<div class="error-text">Parse error:\n${escapeHtml(String(err))}</div>`;
     }
+    resetView();
 }
 
 function getEditorResizeElements() {
@@ -382,11 +707,60 @@ function handleUrlParam() {
 
 async function handleCopySvg() {
     const svg = document.querySelector('#output svg');
-    if (!svg) return;
+    if (!svg) {
+        showToast('No diagram to copy — fix the macro syntax first');
+        return;
+    }
     await navigator.clipboard.writeText(svg.outerHTML);
     const btn = document.getElementById('copy-svg');
     btn.textContent = 'Copied!';
     setTimeout(() => { btn.textContent = 'Copy SVG'; }, 1500);
+}
+
+function showToast(message) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function handleSavePng() {
+    const svg = document.querySelector('#output svg');
+    if (!svg) {
+        showToast('No diagram to export — fix the macro syntax first');
+        return;
+    }
+    const scale = 2;
+    const svgWidth = svg.getAttribute('width') || svg.getBoundingClientRect().width;
+    const svgHeight = svg.getAttribute('height') || svg.getBoundingClientRect().height;
+    const w = parseFloat(svgWidth) * scale;
+    const h = parseFloat(svgHeight) * scale;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(pngBlob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(pngBlob);
+            const h3 = document.querySelector('#output h3');
+            const backtickMatch = h3 && h3.textContent.match(/`([^`]+)`/);
+            const macroName = backtickMatch ? backtickMatch[1] : 'macro_railroad';
+            a.download = `${macroName}.png`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }, 'image/png');
+    };
+    img.src = url;
 }
 
 function wireEvents() {
@@ -394,6 +768,7 @@ function wireEvents() {
         document.getElementById(id).addEventListener('change', updateDiagram);
     }
     document.getElementById('copy-svg').addEventListener('click', handleCopySvg);
+    document.getElementById('save-png').addEventListener('click', handleSavePng);
     document.getElementById('theme-toggle').addEventListener('click', handleThemeToggle);
     document.getElementById('toggle-options').addEventListener('click', handleToggleOptions);
     document.getElementById('editor-resize-handle').addEventListener('pointerdown', startEditorResize);
@@ -409,6 +784,14 @@ function wireEvents() {
         const text = MACROS[link.dataset.macro];
         if (text) aceEditor.setValue(text, -1);
     });
+    // Diagram viewport: zoom + pan
+    const diagramArea = document.getElementById('diagram-area');
+    diagramArea.addEventListener('pointerdown', handleDiagramPointerDown);
+    diagramArea.addEventListener('wheel', handleDiagramWheel, { passive: false });
+    document.getElementById('zoom-in').addEventListener('click', () => zoomBy(ZOOM_STEP));
+    document.getElementById('zoom-out').addEventListener('click', () => zoomBy(-ZOOM_STEP));
+    document.getElementById('zoom-reset').addEventListener('click', resetView);
+
     window.addEventListener('resize', handleWindowResize);
 }
 
